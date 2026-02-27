@@ -1,0 +1,102 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'store' %}">
+            <img src="{% static 'images/logo.png' %}" alt="E-Shop Logo" style="height: 40px; width: auto;">
+        </a>
+
+        <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+
+            <form class="d-flex mx-auto my-3 my-lg-0 w-50" action="{% url 'search' %}" method="GET">
+                <input class="form-control rounded-start-pill border-primary shadow-none" type="search"
+                    placeholder="Search products (e.g. shirt, shoes)..." name="q" value="{{ request.GET.q }}">
+                <button class="btn btn-primary rounded-end-pill px-4" type="submit">
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+            <div class="d-flex align-items-center gap-3 ms-auto mt-2 mt-lg-0">
+                <a href="{% url 'cart_summary' %}" class="text-white position-relative text-decoration-none">
+                    <i class="bi bi-cart3 fs-4"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                        id="cart-count">{{ cart|length }}</span>
+                </a>
+
+                <button class="user-icon-btn" data-bs-toggle="modal" data-bs-target="#userModal">
+                    <i class="bi bi-person fs-5"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+<div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content rounded-4 border-0 shadow-lg">
+            <div class="modal-header border-bottom-0 pb-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center pb-4 px-4">
+
+                {% if user.is_authenticated %}
+                <i class="bi bi-person-check-fill text-success mb-2" style="font-size: 3.5rem;"></i>
+                <h4 class="fw-bold mb-0">Hi, {{ user.first_name|default:user.username }}!</h4>
+                <p class="text-muted small mb-4">{{ user.email }}</p>
+
+                {% if user.is_superuser %}
+                <a href="/admin/" class="btn btn-dark rounded-pill w-100 mb-2 shadow-sm">
+                    <i class="bi bi-shield-lock"></i> Django Admin
+                </a>
+                {% endif %}
+
+                {% if user.is_vendor %}
+                <a href="{% url 'vendor_dashboard' %}"
+                    class="btn btn-outline-primary rounded-pill w-100 mb-2 shadow-sm fw-bold">
+                    <i class="bi bi-shop"></i> Seller Dashboard
+                </a>
+                {% else %}
+                <a href="{% url 'customer_dashboard' %}"
+                    class="btn btn-outline-primary rounded-pill w-100 mb-2 shadow-sm fw-bold">
+                    <i class="bi bi-bag-check"></i> My Orders
+                </a>
+                {% endif %}
+
+                <a href="{% url 'logout' %}" class="btn btn-danger rounded-pill w-100 shadow-sm mt-2">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </a>
+
+                {% else %}
+                <i class="bi bi-person-circle text-secondary mb-3" style="font-size: 4rem;"></i>
+                <h5 class="fw-bold mb-4">Welcome to E-Shop!</h5>
+
+                <a href="{% url 'login' %}" class="btn btn-primary rounded-pill w-100 mb-2 shadow-sm fw-bold py-2">
+                    Login
+                </a>
+                <a href="{% url 'register' %}"
+                    class="btn btn-outline-secondary rounded-pill w-100 shadow-sm fw-bold py-2">
+                    Create Account
+                </a>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .rounded-pill-start {
+        border-radius: 50rem 0 0 50rem !important;
+    }
+
+    .rounded-pill-end {
+        border-radius: 0 50rem 50rem 0 !important;
+    }
+
+    .navbar-custom .input-group {
+        background: white;
+        border-radius: 50rem;
+        padding: 2px;
+    }
+</style>

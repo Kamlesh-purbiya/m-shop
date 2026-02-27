@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card border-0 shadow-sm p-4 mt-4" style="border-radius: 20px;">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="main-image-container overflow-hidden rounded mb-3" id="img-container"
+                style="position: relative; cursor: crosshair;">
+                <img src="{{ single_product.images.url }}" class="img-fluid w-100 rounded" id="mainImage"
+                    alt="Main Image"
+                    style="object-fit: cover; transition: transform 0.2s ease-out; transform-origin: center center;">
+            </div>
+
+            <div class="d-flex gap-2 overflow-auto py-2">
+                <img src="{{ single_product.images.url }}" class="thumbnail-img rounded border border-primary border-2"
+                    width="70" height="70" style="object-fit: cover; cursor: pointer;" onclick="changeMainImage(this)">
+
+                {% for image in product_gallery %}
+                <img src="{{ image.image.url }}" class="thumbnail-img rounded opacity-75" width="70" height="70"
+                    style="object-fit: cover; cursor: pointer;" onclick="changeMainImage(this)">
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-md-7 ps-md-5">
+            <h2 class="fw-bold">{{ single_product.product_name }}</h2>
+            <p class="text-muted"><i class="bi bi-tag-fill"></i> {{ single_product.category.category_name }}</p>
+
+            <h3 class="text-success fw-bold my-3">₹ {{ single_product.price }}</h3>
+
+            <p class="mb-4">{{ single_product.description }}</p>
+
+            <hr>
+
+            {% if single_product.in_stock %}
+            <h5 class="text-success mb-3"><i class="bi bi-check-circle-fill"></i> In Stock ({{ single_product.stock }}
+                available)</h5>
+
+            <div class="d-flex gap-3 mt-4">
+                <input type="number" id="qty" value="1" min="1" max="{{ single_product.stock }}" class="form-control"
+                    style="width: 80px;">
+
+                <button type="button" id="add-button" value="{{ single_product.id }}"
+                    class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm">
+                    <i class="bi bi-cart-plus"></i> Add to Cart
+                </button>
+            </div>
+
+            {% else %}
+            <h5 class="text-danger mb-3"><i class="bi bi-x-circle-fill"></i> Out of Stock</h5>
+            <button class="btn btn-secondary btn-lg rounded-pill px-5" disabled>Unavailable</button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5 pt-5 border-top">
+    <h3 class="fw-bold mb-4"><i class="bi bi-stars text-warning"></i> You May Also Like</h3>
+
+    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+        {% if related_products %}
+        {% for product in related_products %}
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                <a href="{{ product.get_url }}">
+                    <img src="{{ product.images.url }}" class="card-img-top" alt="{{ product.product_name }}"
+                        style="height: 200px; object-fit: cover;">
+                </a>
+                <div class="card-body text-center">
+                    <h6 class="fw-bold mb-1">{{ product.product_name }}</h6>
+                    <p class="text-muted small mb-2">{{ product.category }}</p>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="fw-bold text-primary">₹{{ product.price }}</span>
+                        <a href="{{ product.get_url }}"
+                            class="btn btn-sm btn-outline-primary rounded-pill px-3">View</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="col-12">
+            <p class="text-muted italic">No related products found in this category.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    // Thumbnail Click logic (Main image badalne ke liye)
+    function changeMainImage(element) {
+        document.getElementById('mainImage').src = element.src;
+
+        // Sabhi thumbnails se border/opacity hatao
+        let thumbnails = document.querySelectorAll('.thumbnail-img');
+        thumbnails.forEach(t => {
+            t.classList.remove('border', 'border-primary', 'border-2');
+            t.classList.add('opacity-75');
+        });
+
+        // Click kiye hue thumbnail ko highlight karo
+        element.classList.remove('opacity-75');
+        element.classList.add('border', 'border-primary', 'border-2');
+    }
+
+    // Image Hover Zoom Logic (Bina kisi plugin ke)
+    const container = document.getElementById('img-container');
+    const img = document.getElementById('mainImage');
+
+    container.addEventListener('mousemove', (e) => {
+        const x = e.clientX - e.target.offsetLeft;
+        const y = e.clientY - e.target.offsetTop;
+
+        // Calculate mouse position in percentage
+        const xPercent = Math.round(100 / (e.target.offsetWidth / x));
+        const yPercent = Math.round(100 / (e.target.offsetHeight / y));
+
+        // Update transform origin and scale image
+        img.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+        img.style.transform = "scale(2)"; // 2x zoom level
+    });
+
+    // Jab mouse image se hat jaye toh zoom reset kar do
+    container.addEventListener('mouseleave', () => {
+        img.style.transformOrigin = "center center";
+        img.style.transform = "scale(1)";
+    });
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).on('click', '#add-button', function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '{% url "cart_add" %}', // URL to cart_add view
+            data: {
+                product_id: $('#add-button').val(),
+                product_qty: $('#qty').val(),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action: 'post'
+            },
+            success: function(json) {
+                console.log("AJAX success, new qty: " + json.qty); // Console me check karein
+                $('#cart-count').text(json.qty); // Navbar update
+},
+            error: function(xhr, errmsg, err) {
+                console.log(errmsg);
+            }
+        });
+    });
+</script>
+{% endblock %}

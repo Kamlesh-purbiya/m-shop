@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4 text-center">
+        <a href="{% url 'store' %}" class="btn btn-outline-dark rounded-pill m-1">All Products</a>
+        {% for category in all_categories %}
+            <a href="{% url 'products_by_category' category.slug %}" class="btn btn-outline-dark rounded-pill m-1">
+                {{ category.category_name }}
+            </a>
+        {% endfor %}
+        <p class="mt-2 text-muted"><span id="product-count">{{ product_count }}</span> Items found</p>
+    </div>
+    
+    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4" id="product-list-container">
+        {% include 'store/ajax_product_list.html' %}
+    </div>
+    
+    <div class="container mt-5">
+        <nav aria-label="Page navigation sample">
+            {% if products.has_other_pages %}
+            <ul class="pagination justify-content-center">
+                
+                {% if products.has_previous %}
+                    <li class="page-item"><a class="page-link rounded-pill mx-1" href="?page={{ products.previous_page_number }}">Previous</a></li>
+                {% else %}
+                    <li class="page-item disabled"><a class="page-link rounded-pill mx-1" href="#">Previous</a></li>
+                {% endif %}
+
+                {% for i in products.paginator.page_range %}
+                    {% if products.number == i %}
+                        <li class="page-item active"><a class="page-link rounded-pill mx-1" href="#">{{ i }}</a></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link rounded-pill mx-1" href="?page={{ i }}">{{ i }}</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if products.has_next %}
+                    <li class="page-item"><a class="page-link rounded-pill mx-1" href="?page={{ products.next_page_number }}">Next</a></li>
+                {% else %}
+                    <li class="page-item disabled"><a class="page-link rounded-pill mx-1" href="#">Next</a></li>
+                {% endif %}
+                
+            </ul>
+            {% endif %}
+        </nav>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function(){
+        // Jab bhi user search bar mein kuch type karega
+        $('#searchInput').on('keyup', function(){
+            var query = $(this).val(); 
+            
+            $.ajax({
+                url: "{% url 'ajax_search' %}", 
+                data: {
+                    'q': query 
+                },
+                dataType: 'json',
+                success: function(response){
+                    $('#product-list-container').html(response.data);
+                    $('#product-count').text(response.count);
+                    
+                    // AJAX search ke waqt pagination hide/show karna (Optional)
+                    if(query.length > 0){
+                        $('.pagination').hide();
+                    } else {
+                        $('.pagination').show();
+                    }
+                },
+                error: function(error){
+                    console.log("Error in AJAX request", error);
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

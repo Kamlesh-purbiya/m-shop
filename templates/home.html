@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %} {# Agar aap static images use kar rahe hain #}
+
+{% block content %}
+
+<div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="{% static 'images/banner1.jpg' %}" class="d-block w-100" alt="New Season Collection" style="height: 500px; object-fit: cover;">
+            <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 p-3 rounded">
+                <h2 class="display-4 fw-bold text-white">New Season Collection</h2>
+                <p class="lead text-white-50">Discover the latest trends and styles.</p>
+                <a href="{% url 'store' %}" class="btn btn-primary btn-lg rounded-pill mt-3">Shop Now</a>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img src="{% static 'images/banner2.jpg' %}" class="d-block w-100" alt="Mega Sale" style="height: 500px; object-fit: cover;">
+            <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 p-3 rounded">
+                <h2 class="display-4 fw-bold text-warning">Flash Sale - Up to 50% Off!</h2>
+                <p class="lead text-white-50">Don't miss out on amazing deals for a limited time.</p>
+                <a href="{% url 'store' %}" class="btn btn-warning btn-lg rounded-pill mt-3">Grab Deals</a>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img src="{% static 'images/banner3.avif' %}" class="d-block w-100" alt="Electronics & Gadgets" style="height: 500px; object-fit: cover;">
+            <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 p-3 rounded">
+                <h2 class="display-4 fw-bold text-info">Gadgets & Tech</h2>
+                <p class="lead text-white-50">Explore the future of technology at your fingertips.</p>
+                <a href="{% url 'store' %}" class="btn btn-info btn-lg rounded-pill mt-3">View Electronics</a>
+            </div>
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+<div class="container my-5">
+    <h3 class="fw-bold text-center mb-4">Featured Products</h3>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col text-center">
+            <div class="card p-3 shadow-sm rounded-4">
+                <i class="bi bi-truck text-primary display-4 mb-3"></i>
+                <h5 class="fw-bold">Fast Delivery</h5>
+                <p class="text-muted small">Get your orders quickly.</p>
+            </div>
+        </div>
+        <div class="col text-center">
+            <div class="card p-3 shadow-sm rounded-4">
+                <i class="bi bi-wallet-fill text-success display-4 mb-3"></i>
+                <h5 class="fw-bold">Secure Payments</h5>
+                <p class="text-muted small">Trusted payment options.</p>
+            </div>
+        </div>
+        <div class="col text-center">
+            <div class="card p-3 shadow-sm rounded-4">
+                <i class="bi bi-headset text-info display-4 mb-3"></i>
+                <h5 class="fw-bold">24/7 Support</h5>
+                <p class="text-muted small">Always here to help you.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

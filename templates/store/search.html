@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4 mb-5">
+    
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            {% if query %}
+                <h3 class="fw-bold">Search results for <span class="text-primary">"{{ query }}"</span></h3>
+                <p class="text-muted">Found {{ product_count }} product(s)</p>
+            {% else %}
+                <h3 class="fw-bold text-danger">Please enter a search keyword</h3>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+        {% if products %}
+            {% for product in products %}
+            <div class="col">
+                <div class="card h-100 border-0 shadow-sm rounded-4">
+                    <img src="{{ product.images.url }}" class="card-img-top rounded-top-4" alt="{{ product.product_name }}" style="height: 200px; object-fit: cover;">
+                    <div class="card-body text-center">
+                        <h5 class="card-title fw-bold">{{ product.product_name }}</h5>
+                        <p class="card-text text-muted small">{{ product.category }}</p>
+                        <h6 class="fw-bold text-success mb-3">₹{{ product.price }}</h6>
+                        <a href="#" class="btn btn-outline-primary rounded-pill w-100">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            {% if query %}
+            <div class="col-12 text-center mt-5">
+                <i class="bi bi-search text-muted mb-3" style="font-size: 4rem;"></i>
+                <h4>No exact matches found</h4>
+                <p class="text-muted">Try checking your spelling or use more general terms.</p>
+                <a href="{% url 'store' %}" class="btn btn-primary rounded-pill px-4 mt-3">Back to Store</a>
+            </div>
+            {% endif %}
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

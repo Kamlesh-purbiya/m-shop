@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5 text-center">
+    <div class="card border-0 shadow p-5" style="border-radius: 20px;">
+        <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+        <h1 class="mt-4 fw-bold">Order Placed Successfully!</h1>
+        <p class="lead text-muted mt-2">Thank you for shopping with us. Your order will be delivered soon.</p>
+        <a href="{% url 'store' %}" class="btn btn-primary btn-lg rounded-pill mt-4 px-5">Continue Shopping</a>
+    </div>
+</div>
+{% endblock %}
