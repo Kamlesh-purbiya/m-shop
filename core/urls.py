@@ -16,4 +16,6 @@ urlpatterns = [
     path('dashboard/', account_views.customer_dashboard, name='customer_dashboard'),
     path('cart/', include('cart.urls')),
     path('accounts/', include('accounts.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] 
+if settings.DEBUG or not settings.DEBUG: 
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
